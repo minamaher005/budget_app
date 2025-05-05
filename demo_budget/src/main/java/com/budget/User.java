@@ -1,15 +1,13 @@
 package com.budget;
 
-import com.budget.budget_management.Budget;
-import com.budget.budget_management.BudgetFactory;
-import com.budget.budget_management.IBudgetManager;
-import com.budget.income_management.IIncomeSource;
-import com.budget.income_management.Income;
-import com.budget.income_management.IncomeFactory;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import com.budget.budget_management.Budget;
+import com.budget.budget_management.BudgetFactory;
+import com.budget.budget_management.IBudgetManager;
+import com.budget.income_management.Income;
 
 public class User {
     private static List<User> users = new ArrayList<>();
@@ -18,7 +16,6 @@ public class User {
     private String password;
     private List<Income> incomes;
     private float totalIncome;
-    private IncomeFactory incomeFactory;
     private BudgetFactory budgetFactory;
     private List<IBudgetManager> budgets;
 
@@ -28,7 +25,6 @@ public class User {
         this.password = password;
         this.incomes = new ArrayList<>();
         this.totalIncome = 0;
-        this.incomeFactory = new IncomeFactory();
         this.budgetFactory = new BudgetFactory();
         this.budgets = new ArrayList<>();
     }
@@ -56,17 +52,11 @@ public class User {
         return null;
     }
 
-    public void createIncome(String type, float amount, Date date, String name) {
-        try {
-            IIncomeSource incomeSource = incomeFactory.createIncome(type, amount, date, name);
-            if (incomeSource instanceof Income) {
-                Income income = (Income) incomeSource;
-                incomes.add(income);
-                totalIncome += income.getAmount();
-                income.recordIncome();
-            }
-        } catch (IllegalArgumentException e) {
-            System.out.println("Failed to create income: " + e.getMessage());
+    public void addIncome(Income income) {
+        if (income != null) {
+            incomes.add(income);
+            totalIncome += income.getAmount();
+            income.recordIncome();
         }
     }
 
