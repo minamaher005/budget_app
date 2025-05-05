@@ -1,5 +1,8 @@
+package com.budget;
 
-
+import com.budget.budget_management.Budget;
+import com.budget.budget_management.BudgetFactory;
+import com.budget.budget_management.IBudgetManager;
 import com.budget.income_management.IIncomeSource;
 import com.budget.income_management.Income;
 import com.budget.income_management.IncomeFactory;
