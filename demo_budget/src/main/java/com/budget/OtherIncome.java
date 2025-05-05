@@ -1,0 +1,19 @@
+
+
+import java.util.Date;
+
+public class OtherIncome extends Income {
+    public OtherIncome(float amount, Date date, String name) {
+        super(amount, date, name);
+    }
+
+    @Override
+    public void recordIncome() {
+        System.out.println("Recording other income: " + name + ", amount: " + amount);
+    }
+
+    @Override
+    public float calculateTaxes() {
+        return TaxCalculator.calculateTax(amount, "other");
+    }
+}
