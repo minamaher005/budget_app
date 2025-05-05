@@ -1,5 +1,9 @@
 
 
+import com.budget.income_management.IIncomeSource;
+import com.budget.income_management.Income;
+import com.budget.income_management.IncomeFactory;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
