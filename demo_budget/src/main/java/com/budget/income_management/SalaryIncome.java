@@ -14,6 +14,7 @@ public class SalaryIncome extends Income {
 
     @Override
     public float calculateTaxes() {
-        return TaxCalculator.calculateTax(amount, "salary");
+        // return TaxCalculator.calculateTax(amount, "salary");
+        return 0;
     }
 }

@@ -25,6 +25,6 @@ public class IncomeFactory {
                 throw new IllegalArgumentException("Invalid income type: " + type);
         }
     }
-} {
+} 
     
-}
+
