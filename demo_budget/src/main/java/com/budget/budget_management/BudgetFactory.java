@@ -1,14 +1,21 @@
 package com.budget.budget_management;
-
 public class BudgetFactory {
-    public IBudgetManager createBudget(String type) {
-        switch (type.toLowerCase()) {
-            case "personal":
+    public enum BudgetType {
+        PERSONAL,
+        BUSINESS
+    }
+    public static IBudgetManager createBudget(BudgetType type) {
+        switch (type) {
+            case PERSONAL:
                 return new PersonalBudget();
-            case "business":
+            case BUSINESS:
                 return new BusinessBudget();
             default:
-                throw new IllegalArgumentException("Invalid budget type: " + type);
+                throw new IllegalArgumentException("Invalid budget type");
         }
     }
 }
+
+
+
+

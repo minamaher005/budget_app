@@ -6,16 +6,22 @@ import java.util.List;
 
 import com.budget.budget_management.Budget;
 import com.budget.budget_management.BudgetFactory;
+import com.budget.budget_management.BudgetFactory.BudgetType;
+import com.budget.budget_management.Expense;
 import com.budget.budget_management.IBudgetManager;
+import com.budget.income_management.IIncomeSource;
 import com.budget.income_management.Income;
+import com.budget.income_management.IncomeFactory;
+import com.budget.income_management.IncomeFactory.IncomeType;
 
 public class User {
-    private static List<User> users = new ArrayList<>();
-    private String name;
+    private static final List<User> users = new ArrayList<>();
+    private final String name;
     private String email;
     private String password;
     private List<Income> incomes;
     private float totalIncome;
+    private IncomeFactory incomeFactory;
     private BudgetFactory budgetFactory;
     private List<IBudgetManager> budgets;
 
@@ -25,8 +31,19 @@ public class User {
         this.password = password;
         this.incomes = new ArrayList<>();
         this.totalIncome = 0;
+        this.incomeFactory = new IncomeFactory();
         this.budgetFactory = new BudgetFactory();
         this.budgets = new ArrayList<>();
+    }
+
+    public List<Budget> getBudgets() {
+        List<Budget> userBudgets = new ArrayList<>();
+        for (IBudgetManager budget : budgets) {
+            if (budget instanceof Budget) {
+                userBudgets.add((Budget) budget);
+            }
+        }
+        return userBudgets;
     }
 
     public boolean signup() {
@@ -53,20 +70,33 @@ public class User {
     }
 
     public void addIncome(Income income) {
-        if (income != null) {
-            incomes.add(income);
-            totalIncome += income.getAmount();
-            income.recordIncome();
+        incomes.add(income);
+        totalIncome += income.getAmount();
+        income.recordIncome();
+    }
+
+    public void createIncome(IncomeType type, float amount, Date date, String name) {
+        try {
+            IIncomeSource incomeSource = IncomeFactory.createIncome(type, amount, date, name);
+            if (incomeSource instanceof Income) {
+                Income income = (Income) incomeSource;
+                addIncome(income);
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println("Failed to create income: " + e.getMessage());
         }
     }
 
-    public void createBudget(String type, String category, float limit) {
+    public void createBudget(BudgetType type, String category, float limit) {
         if (limit > totalIncome) {
             System.out.println("Insufficient funds to create budget");
             return;
         }
-        IBudgetManager budget = budgetFactory.createBudget(type);
+        IBudgetManager budget = BudgetFactory.createBudget(type);
         budget.setBudgetLimit(limit);
+        if (budget instanceof Budget) {
+            ((Budget) budget).setCategory(category);
+        }
         budgets.add(budget);
         totalIncome -= limit;
         System.out.println("Budget created: " + category + ", limit: " + limit);
@@ -85,16 +115,32 @@ public class User {
         System.out.println("Budget not found: " + budgetCategory);
     }
 
+    public List<Expense> getAllExpenses() {
+        List<Expense> allExpenses = new ArrayList<>();
+        for (IBudgetManager budget : budgets) {
+            if (budget instanceof Budget) {
+                allExpenses.addAll(((Budget)budget).getExpenses());
+            }
+        }
+        return allExpenses;
+    }
+
+    public float getTotalSpending() {
+        float total = 0;
+        for (IBudgetManager budget : budgets) {
+            if (budget instanceof Budget) {
+                total += ((Budget)budget).getTotalExpenses();
+            }
+        }
+        return total;
+    }
+
     public float getTotalIncome() {
         return totalIncome;
     }
 
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getEmail() {
@@ -107,10 +153,6 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public List<Income> getIncomes() {
-        return new ArrayList<>(incomes);
     }
 
     public void recoverAccount() {

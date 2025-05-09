@@ -11,10 +11,4 @@ public class InvestmentIncome extends Income {
     public void recordIncome() {
         System.out.println("Recording investment income: " + name + ", amount: " + amount);
     }
-
-    @Override
-    public float calculateTaxes() {
-        // return TaxCalculator.calculateTax(amount, "investment");
-        return 0;
-    }
 }

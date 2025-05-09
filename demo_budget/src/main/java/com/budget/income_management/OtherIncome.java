@@ -11,10 +11,4 @@ public class OtherIncome extends Income {
     public void recordIncome() {
         System.out.println("Recording other income: " + name + ", amount: " + amount);
     }
-
-    @Override
-    public float calculateTaxes() {
-        // return TaxCalculator.calculateTax(amount, "other");
-        return 0;
-    }
 }

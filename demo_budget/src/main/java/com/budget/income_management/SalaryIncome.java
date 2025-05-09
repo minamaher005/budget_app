@@ -11,10 +11,4 @@ public class SalaryIncome extends Income {
     public void recordIncome() {
         System.out.println("Recording salary income: " + name + ", amount: " + amount);
     }
-
-    @Override
-    public float calculateTaxes() {
-        // return TaxCalculator.calculateTax(amount, "salary");
-        return 0;
-    }
 }

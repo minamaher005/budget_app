@@ -7,16 +7,36 @@ import java.util.List;
 public abstract class Budget implements IBudgetManager {
     protected float limit;
     protected String category;
-    protected List<Expense> expenses;
+    
 
     public Budget(String category) {
         this.category = category;
         this.expenses = new ArrayList<>();
+        this.totalExpenses = 0;
+        this.reminders = new ArrayList<>();
     }
 
     @Override
-    public void setBudgetLimit(float amount) {
+    public void setBudgetLimit(float amount) 
+    {
         this.limit = amount;
+    }
+
+    public float getBudgetLimit() 
+    {
+         return limit; 
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public boolean isBudgetExceeded() {
+        return totalExpenses > limit;
     }
 
     @Override
@@ -25,6 +45,7 @@ public abstract class Budget implements IBudgetManager {
         if (expense.validate()) {
             expenses.add(expense);
             expense.save();
+            totalExpenses += amount;
         } else {
             System.out.println("Invalid expense");
         }
@@ -71,18 +92,37 @@ public abstract class Budget implements IBudgetManager {
     }
 
     public float getTotalExpenses() {
-        float total = 0;
-        for (Expense expense : expenses) {
-            total += expense.getAmount();
+        return totalExpenses;
+    }
+
+    
+
+    
+
+    public List<Expense> getExpenses() {
+        return new ArrayList<>(expenses);
+    }
+
+    public void addReminder(Reminder reminder) {
+        if (reminder != null) {
+            reminders.add(reminder);
+            reminder.save();
         }
-        return total;
     }
 
-    public boolean isBudgetExceeded() {
-        return getTotalExpenses() > limit;
+    public List<Reminder> getReminders() {
+        return new ArrayList<>(reminders);
     }
 
-    public String getCategory() {
-        return category;
+    public void validateReminders() {
+        for (Reminder reminder : reminders) {
+            
+            if (reminder.validate()) {
+                reminder.scheduleNotification();
+            }
+        }
     }
+    protected List<Expense> expenses;
+    protected float totalExpenses;
+    protected List<Reminder> reminders;
 }
