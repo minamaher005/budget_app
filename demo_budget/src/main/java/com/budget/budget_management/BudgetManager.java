@@ -10,8 +10,8 @@ import com.budget.income_management.Income;
 import com.budget.income_management.IncomeFactory;
 import com.budget.income_management.IncomeFactory.IncomeType;
 
-public class BudgetManager {
-    private final List<IBudgetManager> budgets;
+public class BudgetManager implements IBudgetManager {
+    private final List<Budget> budgets;
     private float allocatedIncome;
 
     public BudgetManager() {
@@ -36,22 +36,66 @@ public class BudgetManager {
             System.out.println("Insufficient funds to create budget. Available: $" + availableIncome);
             return;
         }
-        IBudgetManager budget = BudgetFactory.createBudget(type);
+        
+        Budget budget = BudgetFactory.createBudget(type);
         budget.setBudgetLimit(limit);
-        if (budget instanceof Budget) {
-            ((Budget) budget).setCategory(category);
-        }
+        budget.setCategory(category);
         budgets.add(budget);
         allocatedIncome += limit;
+        
         System.out.println("Budget created: " + category + ", limit: " + limit);
         System.out.println("Remaining available income: $" + (Income.getTotalIncome() - allocatedIncome));
     }
 
+    @Override
+    public void setBudgetLimit(float amount) {
+        if (!budgets.isEmpty()) {
+            budgets.get(budgets.size() - 1).setBudgetLimit(amount);
+        }
+    }
+
+    @Override
+    public void addExpense(float amount, String category, Date date) {
+        if (!budgets.isEmpty()) {
+            budgets.get(budgets.size() - 1).addExpense(amount, category, date);
+        }
+    }
+
+    @Override
+    public void editExpense(int expenseId, float amount, String category, Date date) {
+        for (Budget budget : budgets) {
+            budget.editExpense(expenseId, amount, category, date);
+        }
+    }
+
+    @Override
+    public void deleteExpense(int expenseId) {
+        for (Budget budget : budgets) {
+            budget.deleteExpense(expenseId);
+        }
+    }
+
+    @Override
+    public void setExpenseRecurring(int expenseId, boolean isRecurring) {
+        for (Budget budget : budgets) {
+            budget.setExpenseRecurring(expenseId, isRecurring);
+        }
+    }
+
+    @Override
+    public List<String> getRecommendations() {
+        List<String> recommendations = new ArrayList<>();
+        for (Budget budget : budgets) {
+            recommendations.addAll(budget.getRecommendations());
+        }
+        return recommendations;
+    }
+
     public void addExpenseToBudget(String budgetCategory, float amount, String expenseCategory, Date date) {
-        for (IBudgetManager budget : budgets) {
-            if (budget instanceof Budget && ((Budget)budget).getCategory().equals(budgetCategory)) {
+        for (Budget budget : budgets) {
+            if (budget.getCategory().equals(budgetCategory)) {
                 budget.addExpense(amount, expenseCategory, date);
-                if (budget instanceof Budget && ((Budget)budget).isBudgetExceeded()) {
+                if (budget.isBudgetExceeded()) {
                     System.out.println("Warning: Budget " + budgetCategory + " exceeded!");
                 }
                 return;
@@ -61,7 +105,7 @@ public class BudgetManager {
     }
 
     public float getTotalIncome() {
-        return Income.getTotalIncome();
+        return Income.getTotalIncome() - getTotalSpending();
     }
 
     public float getAvailableIncome() {
@@ -70,5 +114,25 @@ public class BudgetManager {
 
     public List<Income> getIncomes() {
         return Income.getAllIncomes();
+    }
+
+    public List<Expense> getAllExpenses() {
+        List<Expense> allExpenses = new ArrayList<>();
+        for (Budget budget : budgets) {
+            allExpenses.addAll(budget.getExpenses());
+        }
+        return allExpenses;
+    }
+
+    public float getTotalSpending() {
+        float total = 0;
+        for (Budget budget : budgets) {
+            total += budget.getTotalExpenses();
+        }
+        return total;
+    }
+
+    public List<Budget> getBudgets() {
+        return new ArrayList<>(budgets);
     }
 } 

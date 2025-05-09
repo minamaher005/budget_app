@@ -6,17 +6,14 @@ import java.util.Scanner;
 
 import com.budget.budget_management.BudgetFactory.BudgetType;
 import com.budget.budget_management.Expense;
-import com.budget.income_management.IncomeFactory;
 import com.budget.income_management.IncomeFactory.IncomeType;
 
 public class Main {
     private static User currentUser;
-    private static IncomeFactory incomeFactory;
     private static Scanner scanner;
 
     public static void main(String[] args) {
         scanner = new Scanner(System.in);
-        incomeFactory = new IncomeFactory();
         
         while (true) {
             if (currentUser == null) {
@@ -53,14 +50,6 @@ public class Main {
     }
 
     private static void showMainMenu() {
-        // Validate reminders each time the menu is shown
-        if (currentUser != null) {
-            
-            for (com.budget.budget_management.Budget budget : currentUser.getBudgets()) {
-                budget.validateReminders();
-            }
-        }
-
         System.out.println("\n=== Budget App - Main Menu ===");
         System.out.println("Welcome, " + currentUser.getName());
         System.out.println("1. Add Income");
@@ -70,7 +59,7 @@ public class Main {
         System.out.println("5. View All Expenses");
         System.out.println("6. View Total Spending");
         System.out.println("7. Manage Reminders");
-        System.out.println("8. View All Budgets"); // New option
+        System.out.println("8. View All Budgets");
         System.out.println("9. Logout");
         System.out.print("Choose an option: ");
     
@@ -100,7 +89,7 @@ public class Main {
                 manageReminders();
                 break;
             case 8:
-                viewAllBudgets(); // New method
+                viewAllBudgets();
                 break;
             case 9:
                 logout();
@@ -159,7 +148,7 @@ public class Main {
         System.out.print("Enter income name: ");
         String name = scanner.nextLine();
 
-        currentUser.createIncome(type, amount, new Date(), name);
+        currentUser.getBudgetManager().createIncome(type, amount, new Date(), name);
         System.out.println("Income added successfully!");
     }
 
@@ -183,7 +172,7 @@ public class Main {
         float limit = scanner.nextFloat();
         scanner.nextLine(); // Consume newline
 
-        currentUser.createBudget(type, category, limit);
+        currentUser.getBudgetManager().createBudget(type, category, limit);
     }
 
     private static void addExpense() {
@@ -198,34 +187,23 @@ public class Main {
         float amount = scanner.nextFloat();
         scanner.nextLine(); // Consume newline
 
-        currentUser.addExpenseToBudget(budgetCategory, amount, expenseCategory, new Date());
+        currentUser.getBudgetManager().addExpenseToBudget(budgetCategory, amount, expenseCategory, new Date());
     }
 
     private static void viewTotalIncome() {
-        System.out.println("\nTotal Income: $" + currentUser.getTotalIncome());
+        System.out.println("\nTotal Income: $" + currentUser.getBudgetManager().getTotalIncome());
     }
 
     private static void showAllExpenses() {
+        List<Expense> expenses = currentUser.getBudgetManager().getAllExpenses();
         System.out.println("\n=== All Expenses ===");
-        List<Expense> expenses = currentUser.getAllExpenses();
-        if (expenses.isEmpty()) {
-            System.out.println("No expenses found.");
-            return;
-        }
         for (Expense expense : expenses) {
-            System.out.println("Amount: $" + expense.getAmount() + 
-                             ", Category: " + expense.getCategory() + 
-                             ", Date: " + expense.getDate());
+            System.out.println(expense);
         }
     }
 
     private static void viewTotalSpending() {
-        System.out.println("\nTotal Spending: $" + currentUser.getTotalSpending());
-    }
-
-    private static void logout() {
-        currentUser = null;
-        System.out.println("Logged out successfully!");
+        System.out.println("\nTotal Spending: $" + currentUser.getBudgetManager().getTotalSpending());
     }
 
     private static void manageReminders() {
@@ -270,9 +248,8 @@ public class Main {
 
         com.budget.budget_management.Reminder reminder = new com.budget.budget_management.Reminder(description, dateTime);
 
-        // Add reminder to all budgets of the current user
-        for (com.budget.budget_management.Budget budget : currentUser.getBudgets()) {
-        
+        // Add reminder to all budgets
+        for (com.budget.budget_management.Budget budget : currentUser.getBudgetManager().getBudgets()) {
             budget.addReminder(reminder);
         }
 
@@ -280,32 +257,31 @@ public class Main {
     }
 
     private static void listReminders() {
-    System.out.println("\n=== List of Reminders ===");
-    boolean hasReminders = false;
+        System.out.println("\n=== List of Reminders ===");
+        boolean hasReminders = false;
 
-    for (com.budget.budget_management.Budget budget : currentUser.getBudgets()) {
-        java.util.List<com.budget.budget_management.Reminder> reminders = budget.getReminders();
-        if (!reminders.isEmpty()) {
-            hasReminders = true;
-            // System.out.println("\nCategory: " + budget.getCategory());
-            // System.out.println("------------------------------");
-            for (com.budget.budget_management.Reminder reminder : reminders) {
-                System.out.println("• Description: " + reminder.getDescription());
-                System.out.println("  Date & Time: " + new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm").format(reminder.getDateTime()));
-                System.out.println();
+        for (com.budget.budget_management.Budget budget : currentUser.getBudgetManager().getBudgets()) {
+            java.util.List<com.budget.budget_management.Reminder> reminders = budget.getReminders();
+            if (!reminders.isEmpty()) {
+                hasReminders = true;
+                System.out.println("\nCategory: " + budget.getCategory());
+                System.out.println("------------------------------");
+                for (com.budget.budget_management.Reminder reminder : reminders) {
+                    System.out.println("• Description: " + reminder.getDescription());
+                    System.out.println("  Date & Time: " + new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm").format(reminder.getDateTime()));
+                    System.out.println();
+                }
             }
+        }
+
+        if (!hasReminders) {
+            System.out.println("No reminders found.");
         }
     }
 
-    if (!hasReminders) {
-        System.out.println("No reminders found.");
-    }
-}
-
-
     private static void viewAllBudgets() {
         System.out.println("\n=== All Budgets ===");
-        List<com.budget.budget_management.Budget> budgets = currentUser.getBudgets();
+        List<com.budget.budget_management.Budget> budgets = currentUser.getBudgetManager().getBudgets();
         if (budgets.isEmpty()) {
             System.out.println("No budgets found.");
             return;
@@ -315,5 +291,10 @@ public class Main {
                                ", Limit: $" + budget.getBudgetLimit() + 
                                ", Total Expenses: $" + budget.getTotalExpenses());
         }
+    }
+
+    private static void logout() {
+        currentUser = null;
+        System.out.println("Logged out successfully.");
     }
 }

@@ -7,7 +7,9 @@ import java.util.List;
 public abstract class Budget implements IBudgetManager {
     protected float limit;
     protected String category;
-    
+    protected List<Expense> expenses;
+    protected float totalExpenses;
+    protected List<Reminder> reminders;
 
     public Budget(String category) {
         this.category = category;
@@ -17,14 +19,12 @@ public abstract class Budget implements IBudgetManager {
     }
 
     @Override
-    public void setBudgetLimit(float amount) 
-    {
+    public void setBudgetLimit(float amount) {
         this.limit = amount;
     }
 
-    public float getBudgetLimit() 
-    {
-         return limit; 
+    public float getBudgetLimit() {
+        return limit;
     }
 
     public String getCategory() {
@@ -88,16 +88,16 @@ public abstract class Budget implements IBudgetManager {
 
     @Override
     public List<String> getRecommendations() {
-        return new ArrayList<>();
+        List<String> recommendations = new ArrayList<>();
+        if (isBudgetExceeded()) {
+            recommendations.add("Budget exceeded! Consider reducing expenses in " + category);
+        }
+        return recommendations;
     }
 
     public float getTotalExpenses() {
         return totalExpenses;
     }
-
-    
-
-    
 
     public List<Expense> getExpenses() {
         return new ArrayList<>(expenses);
@@ -116,13 +116,9 @@ public abstract class Budget implements IBudgetManager {
 
     public void validateReminders() {
         for (Reminder reminder : reminders) {
-            
             if (reminder.validate()) {
                 reminder.scheduleNotification();
             }
         }
     }
-    protected List<Expense> expenses;
-    protected float totalExpenses;
-    protected List<Reminder> reminders;
 }
