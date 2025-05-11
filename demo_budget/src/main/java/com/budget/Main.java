@@ -50,6 +50,13 @@ public class Main {
     }
 
     private static void showMainMenu() {
+        if (currentUser != null) {
+            
+            for (com.budget.budget_management.Budget budget : currentUser.getBudgetManager().getBudgets()) {
+
+                budget.validateReminders();
+            }
+        }
         System.out.println("\n=== Budget App - Main Menu ===");
         System.out.println("Welcome, " + currentUser.getName());
         System.out.println("1. Add Income");
