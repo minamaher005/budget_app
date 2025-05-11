@@ -1,9 +1,12 @@
 E:\budget1\budget_app\demo_budget\src\main\java\com\budget\budget_management\Budget.java
 E:\budget1\budget_app\demo_budget\src\main\java\com\budget\budget_management\BudgetFactory.java
+E:\budget1\budget_app\demo_budget\src\main\java\com\budget\budget_management\BudgetManager.java
 E:\budget1\budget_app\demo_budget\src\main\java\com\budget\budget_management\BusinessBudget.java
 E:\budget1\budget_app\demo_budget\src\main\java\com\budget\budget_management\Expense.java
 E:\budget1\budget_app\demo_budget\src\main\java\com\budget\budget_management\IBudgetManager.java
 E:\budget1\budget_app\demo_budget\src\main\java\com\budget\budget_management\PersonalBudget.java
+E:\budget1\budget_app\demo_budget\src\main\java\com\budget\budget_management\Reminder.java
+E:\budget1\budget_app\demo_budget\src\main\java\com\budget\BudgetAppGUI.java
 E:\budget1\budget_app\demo_budget\src\main\java\com\budget\income_management\IIncomeSource.java
 E:\budget1\budget_app\demo_budget\src\main\java\com\budget\income_management\Income.java
 E:\budget1\budget_app\demo_budget\src\main\java\com\budget\income_management\IncomeFactory.java

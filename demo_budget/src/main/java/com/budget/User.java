@@ -3,9 +3,7 @@ package com.budget;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.budget.budget_management.Budget;
 import com.budget.budget_management.BudgetManager;
-import com.budget.budget_management.IBudgetManager;
 
 public class User {
     private static final List<User> users = new ArrayList<>();
