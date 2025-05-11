@@ -249,7 +249,7 @@ public class Main {
         try {
             dateTime = sdf.parse(dateTimeStr);
         } catch (java.text.ParseException e) {
-            System.out.println("Invalid date format. Please use yyyy-MM-dd HH:mm.");
+            System.out.println("Invalid date format. Please use this format yyyy-MM-dd HH:mm.");
             return;
         }
 
@@ -282,7 +282,7 @@ public class Main {
         }
 
         if (!hasReminders) {
-            System.out.println("No reminders found.");
+            System.out.println("No reminders found!");
         }
     }
 
@@ -290,7 +290,7 @@ public class Main {
         System.out.println("\n=== All Budgets ===");
         List<com.budget.budget_management.Budget> budgets = currentUser.getBudgetManager().getBudgets();
         if (budgets.isEmpty()) {
-            System.out.println("No budgets found.");
+            System.out.println("No budgets found!");
             return;
         }
         for (com.budget.budget_management.Budget budget : budgets) {
@@ -303,5 +303,6 @@ public class Main {
     private static void logout() {
         currentUser = null;
         System.out.println("Logged out successfully.");
+        System.out.println("-------------------------------");
     }
 }
