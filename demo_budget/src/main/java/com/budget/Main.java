@@ -121,7 +121,7 @@ public class Main {
 
         currentUser = new User(name, email, password);
         if (currentUser.signup()) {
-            System.out.println("Signup successful!");
+            System.out.println("Signup Successful!");
         } else {
             System.out.println("Signup failed. User might already exist.");
             currentUser = null;
@@ -165,7 +165,7 @@ public class Main {
             return;
         }
         
-        System.out.print("Enter category: ");
+        System.out.print("Enter category here: ");
         String category = scanner.nextLine();
         
         System.out.print("Enter limit: ");

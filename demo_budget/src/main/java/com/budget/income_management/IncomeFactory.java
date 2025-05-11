@@ -16,7 +16,7 @@ public class IncomeFactory {
             throw new IllegalArgumentException("Name cannot be null or empty");
         }
         if (date == null) {
-            throw new IllegalArgumentException("Date cannot be null");
+            throw new IllegalArgumentException("Date cannot be Empty");
         }
 
         switch (type) {
